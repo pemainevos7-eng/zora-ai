@@ -1,0 +1,2335 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#06050a">
+<title>ZORA AI</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+:root{
+  --bg:#06050a;
+  --panel:rgba(13,10,20,.82);
+  --line:rgba(255,255,255,.075);
+  --purple:#a855f7;
+  --purple2:#7c3aed;
+  --text:#f8f7fb;
+  --muted:#918b9e;
+}
+
+html,body{
+  width:100%;
+  height:100%;
+}
+
+body{
+  font-family:Inter,Arial,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(
+      ellipse 700px 450px at 50% -15%,
+      rgba(139,92,246,.22),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 500px 500px at 100% 100%,
+      rgba(124,58,237,.10),
+      transparent 70%
+    ),
+    var(--bg);
+  overflow:hidden;
+}
+
+/* BACKGROUND */
+
+.background{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+  z-index:-2;
+}
+
+.grid{
+  position:absolute;
+  inset:0;
+  opacity:.3;
+
+  background-image:
+    linear-gradient(
+      rgba(255,255,255,.018) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,.018) 1px,
+      transparent 1px
+    );
+
+  background-size:48px 48px;
+
+  mask-image:
+    linear-gradient(
+      to bottom,
+      black,
+      transparent 90%
+    );
+}
+
+.glow{
+  position:absolute;
+  width:500px;
+  height:500px;
+  border-radius:50%;
+  filter:blur(120px);
+  opacity:.11;
+}
+
+.glow.one{
+  background:#8b5cf6;
+  top:-250px;
+  left:20%;
+}
+
+.glow.two{
+  background:#6d28d9;
+  right:-250px;
+  bottom:-220px;
+}
+
+/* APP */
+
+.app{
+  width:100%;
+  height:100%;
+  display:flex;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+  width:285px;
+  height:100%;
+  flex:none;
+
+  padding:18px;
+
+  display:flex;
+  flex-direction:column;
+
+  background:rgba(7,5,12,.7);
+  border-right:1px solid var(--line);
+
+  backdrop-filter:blur(30px);
+  -webkit-backdrop-filter:blur(30px);
+
+  position:relative;
+  z-index:20;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:4px 5px 22px;
+}
+
+.brandOrb{
+  width:40px;
+  height:40px;
+
+  border-radius:14px;
+
+  display:grid;
+  place-items:center;
+
+  background:
+    radial-gradient(
+      circle at 30% 20%,
+      #e9d5ff,
+      #a855f7 45%,
+      #4c1d95
+    );
+
+  box-shadow:
+    0 0 25px rgba(168,85,247,.32),
+    inset 0 0 12px rgba(255,255,255,.2);
+
+  font-size:18px;
+}
+
+.brandName{
+  font-size:18px;
+  font-weight:800;
+}
+
+.brandSub{
+  color:#777081;
+  font-size:9px;
+  margin-top:2px;
+  letter-spacing:1.3px;
+}
+
+.newChat{
+  height:47px;
+  width:100%;
+
+  border:1px solid rgba(168,85,247,.25);
+  border-radius:14px;
+
+  color:white;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(168,85,247,.18),
+      rgba(124,58,237,.06)
+    );
+
+  cursor:pointer;
+
+  font-weight:600;
+  font-size:12px;
+
+  transition:.25s;
+}
+
+.newChat:hover{
+  transform:translateY(-1px);
+
+  border-color:rgba(192,132,252,.5);
+
+  box-shadow:
+    0 8px 30px rgba(124,58,237,.15);
+}
+
+.sectionTitle{
+  color:#625c6c;
+
+  font-size:9px;
+  font-weight:800;
+
+  letter-spacing:1.5px;
+
+  margin:27px 7px 10px;
+}
+
+.history{
+  flex:1;
+  overflow:auto;
+  scrollbar-width:none;
+}
+
+.history::-webkit-scrollbar{
+  display:none;
+}
+
+.historyItem{
+  display:flex;
+  align-items:center;
+  gap:9px;
+
+  padding:11px 10px;
+  margin-bottom:3px;
+
+  border-radius:10px;
+
+  color:#96909f;
+
+  font-size:11px;
+
+  cursor:pointer;
+
+  transition:.2s;
+}
+
+.historyItem::before{
+  content:"◌";
+  color:#655e70;
+}
+
+.historyItem:hover{
+  color:white;
+  background:rgba(255,255,255,.045);
+}
+
+.sidebarBottom{
+  padding-top:14px;
+  border-top:1px solid var(--line);
+}
+
+.connection{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:10px 11px;
+
+  border-radius:12px;
+
+  background:rgba(255,255,255,.025);
+  border:1px solid rgba(255,255,255,.045);
+}
+
+.connectionLeft{
+  display:flex;
+  align-items:center;
+  gap:8px;
+
+  color:#85808d;
+  font-size:10px;
+}
+
+.online{
+  width:6px;
+  height:6px;
+
+  border-radius:50%;
+
+  background:#4ade80;
+
+  box-shadow:0 0 12px #4ade80;
+}
+
+.connectionBadge{
+  font-size:8px;
+  color:#9e8bad;
+}
+
+/* MAIN */
+
+.main{
+  flex:1;
+  min-width:0;
+  height:100%;
+
+  position:relative;
+
+  display:flex;
+  flex-direction:column;
+}
+
+/* HEADER */
+
+.header{
+  height:70px;
+  flex:none;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:0 27px;
+
+  border-bottom:1px solid var(--line);
+
+  background:rgba(7,5,12,.38);
+
+  backdrop-filter:blur(22px);
+
+  z-index:10;
+}
+
+.headerLeft{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.mobileMenu{
+  display:none;
+
+  width:40px;
+  height:40px;
+
+  padding:0;
+
+  border:0;
+  border-radius:10px;
+
+  background:transparent;
+  color:#fff;
+
+  font-size:27px;
+  line-height:1;
+
+  cursor:pointer;
+
+  position:relative;
+  z-index:10001;
+
+  transition:.2s;
+}
+
+.mobileMenu:active{
+  transform:scale(.9);
+}
+
+.modelSelector{
+  display:flex;
+  align-items:center;
+  gap:8px;
+
+  font-size:12px;
+  font-weight:700;
+}
+
+.modelDot{
+  width:8px;
+  height:8px;
+
+  border-radius:50%;
+
+  background:#b46cff;
+
+  box-shadow:0 0 13px #a855f7;
+}
+
+.modelTag{
+  padding:5px 8px;
+
+  border:1px solid rgba(168,85,247,.2);
+  border-radius:7px;
+
+  color:#c49be8;
+  background:rgba(168,85,247,.07);
+
+  font-size:8px;
+  letter-spacing:.5px;
+}
+
+.headerRight{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.headerButton{
+  width:34px;
+  height:34px;
+
+  border:1px solid var(--line);
+  border-radius:10px;
+
+  color:#938c9d;
+  background:rgba(255,255,255,.025);
+
+  cursor:pointer;
+
+  transition:.2s;
+}
+
+.headerButton:hover{
+  color:white;
+  border-color:rgba(168,85,247,.25);
+}
+
+/* CHAT */
+
+.chat{
+  flex:1;
+
+  overflow-y:auto;
+
+  scroll-behavior:smooth;
+
+  padding:35px 20px 190px;
+}
+
+.chat::-webkit-scrollbar{
+  width:5px;
+}
+
+.chat::-webkit-scrollbar-thumb{
+  background:rgba(255,255,255,.08);
+  border-radius:20px;
+}
+
+.chatInner{
+  width:min(940px,100%);
+  margin:auto;
+}
+
+/* WELCOME */
+
+.welcome{
+  min-height:calc(100vh - 270px);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  flex-direction:column;
+
+  text-align:center;
+
+  animation:welcomeIn .8s ease;
+}
+
+.heroOrb{
+  position:relative;
+
+  width:92px;
+  height:92px;
+
+  border-radius:29px;
+
+  display:grid;
+  place-items:center;
+
+  margin-bottom:25px;
+
+  background:
+    radial-gradient(
+      circle at 32% 22%,
+      #f0dfff 0%,
+      #c084fc 18%,
+      #8b5cf6 48%,
+      #4c1d95 100%
+    );
+
+  box-shadow:
+    0 0 25px rgba(168,85,247,.28),
+    0 0 80px rgba(124,58,237,.14),
+    inset 0 0 20px rgba(255,255,255,.17);
+
+  animation:orbFloat 4s ease-in-out infinite;
+}
+
+.heroOrb::before{
+  content:"";
+
+  position:absolute;
+
+  inset:-8px;
+
+  border:1px solid rgba(192,132,252,.18);
+
+  border-radius:35px;
+
+  animation:ring 4s linear infinite;
+}
+
+.heroSymbol{
+  font-size:34px;
+  text-shadow:0 0 20px white;
+}
+
+.welcomeEyebrow{
+  display:flex;
+  align-items:center;
+  gap:7px;
+
+  margin-bottom:10px;
+
+  color:#8e7a9f;
+
+  font-size:9px;
+  font-weight:700;
+
+  letter-spacing:2px;
+}
+
+.welcomeEyebrow span{
+  width:4px;
+  height:4px;
+
+  border-radius:50%;
+
+  background:#a855f7;
+}
+
+.welcome h1{
+  font-size:clamp(35px,5vw,58px);
+
+  line-height:1;
+
+  letter-spacing:-3px;
+
+  margin-bottom:16px;
+}
+
+.gradientText{
+  background:
+    linear-gradient(
+      100deg,
+      #fff 5%,
+      #e9d5ff 35%,
+      #b46cff 70%,
+      #8b5cf6
+    );
+
+  -webkit-background-clip:text;
+  background-clip:text;
+
+  color:transparent;
+}
+
+.welcomeDescription{
+  max-width:580px;
+
+  color:#817a8d;
+
+  font-size:13px;
+
+  line-height:1.8;
+}
+
+/* PROMPTS */
+
+.promptGrid{
+  width:min(720px,100%);
+
+  display:grid;
+
+  grid-template-columns:repeat(2,1fr);
+
+  gap:10px;
+
+  margin-top:31px;
+}
+
+.promptCard{
+  position:relative;
+
+  padding:15px;
+
+  min-height:78px;
+
+  text-align:left;
+
+  border:1px solid var(--line);
+
+  border-radius:15px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.035),
+      rgba(255,255,255,.012)
+    );
+
+  cursor:pointer;
+
+  transition:.25s;
+
+  color:white;
+}
+
+.promptCard:hover{
+  transform:translateY(-3px);
+
+  border-color:rgba(168,85,247,.28);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(168,85,247,.10),
+      rgba(255,255,255,.025)
+    );
+}
+
+.promptIcon{
+  width:28px;
+  height:28px;
+
+  display:grid;
+  place-items:center;
+
+  margin-bottom:9px;
+
+  border-radius:9px;
+
+  color:#c69af1;
+
+  background:rgba(168,85,247,.09);
+
+  font-size:12px;
+}
+
+.promptTitle{
+  font-size:11px;
+  font-weight:700;
+  color:#c7c1cf;
+}
+
+.promptText{
+  margin-top:4px;
+
+  color:#625d69;
+
+  font-size:9px;
+
+  line-height:1.5;
+}
+
+/* MESSAGES */
+
+.message{
+  display:flex;
+  gap:13px;
+
+  margin-bottom:29px;
+
+  animation:messageIn .3s ease;
+}
+
+.message.user{
+  flex-direction:row-reverse;
+}
+
+.avatar{
+  width:35px;
+  height:35px;
+
+  flex:none;
+
+  display:grid;
+  place-items:center;
+
+  border-radius:12px;
+
+  font-size:11px;
+  font-weight:800;
+}
+
+.aiAvatar{
+  background:
+    radial-gradient(
+      circle at 30% 20%,
+      #d8b4fe,
+      #8b5cf6 45%,
+      #4c1d95
+    );
+
+  box-shadow:
+    0 0 18px rgba(139,92,246,.2);
+}
+
+.userAvatar{
+  background:#201c27;
+
+  color:#aaa3b3;
+
+  border:1px solid var(--line);
+}
+
+.bubble{
+  max-width:min(780px,82%);
+
+  color:#d9d4df;
+
+  font-size:13px;
+
+  line-height:1.8;
+
+  overflow-wrap:anywhere;
+}
+
+.user .bubble{
+  padding:12px 15px;
+
+  border-radius:17px 5px 17px 17px;
+
+  color:#f5f2f8;
+
+  border:1px solid rgba(168,85,247,.16);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(30,23,40,.95),
+      rgba(25,18,35,.9)
+    );
+}
+
+.ai .bubble{
+  padding-top:2px;
+}
+
+.bubble p{
+  margin-bottom:11px;
+}
+
+.bubble p:last-child{
+  margin-bottom:0;
+}
+
+.inlineCode{
+  padding:2px 5px;
+
+  border-radius:5px;
+
+  color:#d8b4fe;
+
+  background:rgba(168,85,247,.08);
+
+  font-family:monospace;
+}
+
+/* CODE */
+
+.codeWrap{
+  overflow:hidden;
+
+  margin:15px 0;
+
+  border:1px solid rgba(255,255,255,.08);
+
+  border-radius:14px;
+
+  background:#08070b;
+
+  box-shadow:0 15px 40px rgba(0,0,0,.22);
+}
+
+.codeHeader{
+  height:40px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:0 12px;
+
+  border-bottom:1px solid rgba(255,255,255,.06);
+
+  background:#100d15;
+
+  color:#756e7d;
+
+  font-size:9px;
+}
+
+.codeLanguage{
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+
+.codeDots{
+  display:flex;
+  gap:4px;
+}
+
+.codeDots span{
+  width:6px;
+  height:6px;
+
+  border-radius:50%;
+
+  background:#39343e;
+}
+
+.copyCode{
+  border:1px solid rgba(255,255,255,.07);
+
+  border-radius:7px;
+
+  padding:5px 8px;
+
+  color:#918998;
+
+  background:rgba(255,255,255,.035);
+
+  font-size:9px;
+
+  cursor:pointer;
+}
+
+pre{
+  padding:17px;
+
+  max-height:500px;
+
+  overflow:auto;
+
+  color:#cfc8d9;
+
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Consolas,
+    monospace;
+
+  font-size:11px;
+
+  line-height:1.7;
+}
+
+/* ACTIONS */
+
+.actions{
+  display:flex;
+  gap:6px;
+  margin-top:8px;
+}
+
+.action{
+  border:0;
+
+  padding:5px 7px;
+
+  border-radius:7px;
+
+  color:#696271;
+
+  background:transparent;
+
+  font-size:9px;
+
+  cursor:pointer;
+}
+
+.action:hover{
+  color:#bcb3c6;
+  background:rgba(255,255,255,.04);
+}
+
+/* TYPING */
+
+.typing{
+  display:flex;
+  align-items:center;
+  gap:4px;
+
+  height:28px;
+}
+
+.typing span{
+  width:5px;
+  height:5px;
+
+  border-radius:50%;
+
+  background:#a855f7;
+
+  animation:typing 1.15s infinite;
+}
+
+.typing span:nth-child(2){
+  animation-delay:.15s;
+}
+
+.typing span:nth-child(3){
+  animation-delay:.3s;
+}
+
+/* COMPOSER */
+
+.composerArea{
+  position:absolute;
+
+  left:0;
+  right:0;
+  bottom:0;
+
+  padding:30px 20px 25px;
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(6,5,10,1) 55%,
+      rgba(6,5,10,.86) 75%,
+      transparent
+    );
+
+  z-index:8;
+}
+
+.composer{
+  width:min(940px,100%);
+
+  margin:auto;
+
+  padding:9px;
+
+  border-radius:20px;
+
+  border:1px solid rgba(255,255,255,.09);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(24,18,34,.92),
+      rgba(13,10,20,.94)
+    );
+
+  backdrop-filter:blur(30px);
+
+  box-shadow:0 20px 70px rgba(0,0,0,.42);
+}
+
+.composer:focus-within{
+  border-color:rgba(168,85,247,.3);
+
+  box-shadow:
+    0 20px 70px rgba(0,0,0,.45),
+    0 0 40px rgba(124,58,237,.08);
+}
+
+.inputRow{
+  display:flex;
+  align-items:flex-end;
+  gap:8px;
+}
+
+textarea{
+  flex:1;
+
+  min-height:46px;
+  max-height:150px;
+
+  resize:none;
+
+  padding:13px 11px;
+
+  border:0;
+  outline:0;
+
+  color:white;
+
+  background:transparent;
+
+  font-family:inherit;
+
+  font-size:13px;
+  line-height:1.5;
+}
+
+textarea::placeholder{
+  color:#5e5867;
+}
+
+.sendButton{
+  width:45px;
+  height:45px;
+
+  flex:none;
+
+  border:0;
+  border-radius:13px;
+
+  display:grid;
+  place-items:center;
+
+  color:white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #b46cff,
+      #7c3aed
+    );
+
+  box-shadow:
+    0 7px 25px rgba(124,58,237,.25);
+
+  cursor:pointer;
+
+  font-size:16px;
+
+  transition:.2s;
+}
+
+.sendButton:hover{
+  transform:translateY(-2px);
+
+  box-shadow:
+    0 10px 30px rgba(124,58,237,.38);
+}
+
+.sendButton:disabled{
+  opacity:.4;
+  cursor:not-allowed;
+  transform:none;
+}
+
+.composerFooter{
+  display:flex;
+
+  align-items:center;
+  justify-content:space-between;
+
+  padding:3px 8px 1px;
+}
+
+.composerHint{
+  color:#514b58;
+  font-size:8px;
+}
+
+.composerModel{
+  color:#615a69;
+  font-size:8px;
+}
+
+/* ANIMATIONS */
+
+@keyframes welcomeIn{
+  from{
+    opacity:0;
+    transform:translateY(18px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+@keyframes messageIn{
+  from{
+    opacity:0;
+    transform:translateY(7px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+@keyframes orbFloat{
+  0%,100%{
+    transform:translateY(0) rotate(0);
+  }
+
+  50%{
+    transform:translateY(-8px) rotate(2deg);
+  }
+}
+
+@keyframes ring{
+  from{
+    transform:rotate(0);
+  }
+
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+@keyframes typing{
+  0%,60%,100%{
+    transform:translateY(0);
+    opacity:.35;
+  }
+
+  30%{
+    transform:translateY(-5px);
+    opacity:1;
+  }
+}
+
+/* MOBILE */
+
+@media(max-width:760px){
+
+  .sidebar{
+    position:fixed;
+
+    top:0;
+    left:-300px;
+    bottom:0;
+
+    width:285px;
+
+    z-index:9999;
+
+    transition:left .3s ease;
+
+    box-shadow:
+      20px 0 70px rgba(0,0,0,.5);
+  }
+
+  .sidebar.open{
+    left:0 !important;
+  }
+
+  .mobileMenu{
+    display:grid;
+  }
+
+  .header{
+    height:62px;
+    padding:0 14px;
+  }
+
+  .headerRight{
+    display:none;
+  }
+
+  .chat{
+    padding:25px 13px 170px;
+  }
+
+  .welcome{
+    min-height:calc(100vh - 245px);
+  }
+
+  .heroOrb{
+    width:72px;
+    height:72px;
+
+    border-radius:23px;
+  }
+
+  .heroSymbol{
+    font-size:27px;
+  }
+
+  .welcome h1{
+    font-size:36px;
+    letter-spacing:-2px;
+  }
+
+  .welcomeDescription{
+    font-size:11px;
+    max-width:330px;
+  }
+
+  .promptGrid{
+    grid-template-columns:1fr;
+
+    width:100%;
+    max-width:370px;
+  }
+
+  .promptCard{
+    min-height:65px;
+  }
+
+  .promptText{
+    display:none;
+  }
+
+  .bubble{
+    max-width:87%;
+    font-size:12px;
+  }
+
+  .avatar{
+    width:31px;
+    height:31px;
+    border-radius:10px;
+  }
+
+  .composerArea{
+    padding:20px 10px 12px;
+  }
+
+  .composer{
+    border-radius:17px;
+  }
+
+  .composerFooter{
+    display:none;
+  }
+
+  textarea{
+    font-size:12px;
+  }
+
+  .sendButton{
+    width:42px;
+    height:42px;
+  }
+}
+.attachWrap{display:flex;align-items:center}.attachButton,.imageButton{width:42px;height:42px;border:1px solid rgba(255,255,255,.09);border-radius:13px;background:rgba(255,255,255,.045);color:#fff;cursor:pointer;font-size:19px;flex:none}.attachButton:hover,.imageButton:hover{border-color:rgba(168,85,247,.55);background:rgba(168,85,247,.12)}.imageButton{margin-right:4px}.attachmentPreview{display:none;gap:8px;align-items:center;padding:8px 10px 2px;color:#aaa;font-size:11px}.attachmentPreview.show{display:flex}.fileChip{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid rgba(255,255,255,.09);border-radius:11px;background:rgba(255,255,255,.04)}.fileChip img{width:30px;height:30px;object-fit:cover;border-radius:7px}.fileRemove{border:0;background:transparent;color:#999;cursor:pointer;font-size:16px}.generatedImage{display:block;max-width:min(100%,650px);border-radius:18px;margin-top:12px;border:1px solid rgba(255,255,255,.1);box-shadow:0 20px 60px rgba(0,0,0,.35)}.downloadImage{display:inline-block;margin-top:9px;padding:8px 12px;border-radius:10px;background:#a855f7;color:#fff;text-decoration:none;font-size:11px}
+</style>
+</head>
+
+<body>
+
+<div class="background">
+  <div class="grid"></div>
+  <div class="glow one"></div>
+  <div class="glow two"></div>
+</div>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar" id="sidebar">
+
+  <div class="brand">
+
+    <div class="brandOrb">✦</div>
+
+    <div>
+      <div class="brandName">ZORA AI</div>
+
+      <div class="brandSub">
+        ASSISTEN INTERNATIONAL
+      </div>
+    </div>
+
+  </div>
+
+  <button
+    class="newChat"
+    id="newChat"
+    type="button"
+  >
+    ＋ &nbsp; OBROLAN BARU
+  </button>
+
+  <div class="sectionTitle">
+    RIWAYAT OBROLAN
+  </div>
+
+  <div
+    class="history"
+    id="history"
+  ></div>
+
+  <div class="sidebarBottom">
+
+    <div class="connection">
+
+      <div class="connectionLeft">
+        <span class="online"></span>
+        ZORA AI
+      </div>
+
+      <div class="connectionBadge">
+        ONLINE
+      </div>
+
+    </div>
+
+  </div>
+
+</aside>
+
+<!-- MAIN -->
+
+<main class="main">
+
+<header class="header">
+
+  <div class="headerLeft">
+
+    <button
+      class="mobileMenu"
+      id="mobileMenu"
+      type="button"
+      aria-label="Buka menu"
+    >
+      ☰
+    </button>
+
+    <div class="modelSelector">
+
+      <span class="modelDot"></span>
+
+      ZORA
+
+      <span class="modelTag">
+        AI
+      </span>
+
+    </div>
+
+  </div>
+
+  <div class="headerRight">
+
+    <button
+      class="headerButton"
+      id="headerNew"
+      type="button"
+    >
+      ＋
+    </button>
+
+    <button
+      class="headerButton"
+      type="button"
+    >
+      ⋯
+    </button>
+
+  </div>
+
+</header>
+
+<section
+  class="chat"
+  id="chat"
+>
+
+<div
+  class="chatInner"
+  id="chatInner"
+>
+
+<!-- WELCOME -->
+
+<div
+  class="welcome"
+  id="welcome"
+>
+
+  <div class="heroOrb">
+    <span class="heroSymbol">✦</span>
+  </div>
+
+  <div class="welcomeEyebrow">
+    <span></span>
+    ZORA TRYNITY 
+    <span></span>
+  </div>
+
+  <h1>
+    Apa yang bisa
+    <span class="gradientText">
+      saya bantu?
+    </span>
+  </h1>
+
+  <p class="welcomeDescription">
+    Jelajahi ide, buat website, tulis kode,
+    belajar sesuatu yang baru, atau sekadar
+    ngobrol bersama ZORA AI.
+  </p>
+
+  <div class="promptGrid">
+
+    <button
+      class="promptCard"
+      data-prompt="Buatkan saya website landing page modern, mewah, responsive, dan lengkap dengan HTML CSS JavaScript"
+      type="button"
+    >
+
+      <div class="promptIcon">◇</div>
+
+      <div class="promptTitle">
+        Buat website
+      </div>
+
+      <div class="promptText">
+        Bangun website modern dari nol.
+      </div>
+
+    </button>
+
+    <button
+      class="promptCard"
+      data-prompt="Jelaskan konsep kecerdasan buatan dengan bahasa yang sangat mudah dipahami"
+      type="button"
+    >
+
+      <div class="promptIcon">◈</div>
+
+      <div class="promptTitle">
+        Pelajari sesuatu
+      </div>
+
+      <div class="promptText">
+        Dapatkan penjelasan sederhana.
+      </div>
+
+    </button>
+
+    <button
+      class="promptCard"
+      data-prompt="Buatkan kode HTML CSS dan JavaScript untuk website portfolio premium"
+      type="button"
+    >
+
+      <div class="promptIcon">◆</div>
+
+      <div class="promptTitle">
+        Tulis kode
+      </div>
+
+      <div class="promptText">
+        Buat kode yang siap digunakan.
+      </div>
+
+    </button>
+
+    <button
+      class="promptCard"
+      data-prompt="Berikan saya 10 ide website yang berguna dan menarik untuk dibuat"
+      type="button"
+    >
+
+      <div class="promptIcon">✧</div>
+
+      <div class="promptTitle">
+        Cari inspirasi
+      </div>
+
+      <div class="promptText">
+        Temukan ide project baru.
+      </div>
+
+    </button>
+
+  </div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- COMPOSER -->
+
+<div class="composerArea">
+
+  <div class="composer">
+
+    <div class="inputRow">
+
+      <textarea
+        id="input"
+        rows="1"
+        maxlength="12000"
+        placeholder="Tulis pesan untuk ZORA AI..."
+      ></textarea>
+
+      <div class="attachWrap"><button class="attachButton" id="attachButton" type="button" title="Kirim foto atau file">＋</button><input id="fileInput" type="file" hidden accept="image/*,.pdf,.txt,.csv,.json,.md,.html,.css,.js,.py,.doc,.docx"></div><button class="imageButton" id="imageButton" type="button" title="Buat gambar">✦</button><button class="sendButton" id="send" type="button">
+        ↑
+      </button>
+
+    </div>
+
+    <div class="attachmentPreview" id="attachmentPreview"></div>
+    <div class="composerFooter">
+
+      <div class="composerHint">
+        Enter untuk mengirim · Shift + Enter untuk baris baru
+      </div>
+
+      <div class="composerModel">
+        ZORA AI
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+</main>
+
+</div>
+
+<script>
+
+const input =
+  document.getElementById("input");
+
+const send =
+  document.getElementById("send");
+
+const chat =
+  document.getElementById("chat");
+
+const chatInner =
+  document.getElementById("chatInner");
+
+const newChat =
+  document.getElementById("newChat");
+
+const headerNew =
+  document.getElementById("headerNew");
+
+const historyEl =
+  document.getElementById("history");
+
+const sidebar =
+  document.getElementById("sidebar");
+
+const mobileMenu =
+  document.getElementById("mobileMenu");
+
+let messages = [];
+let busy = false;
+
+let saved =
+  JSON.parse(
+    localStorage.getItem("zora_history") || "[]"
+  );
+
+/* ESCAPE */
+
+function escapeHTML(text){
+
+  return text
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+/* FORMAT AI */
+
+function formatAI(text){
+
+  let safe =
+    escapeHTML(text);
+
+  const blocks = [];
+
+  safe =
+    safe.replace(
+      /```([a-zA-Z0-9+#._-]*)\n?([\s\S]*?)```/g,
+      function(_,language,code){
+
+        const id =
+          "code_" +
+          Math.random()
+          .toString(36)
+          .slice(2);
+
+        blocks.push({
+          id,
+          language:language || "CODE",
+          code
+        });
+
+        return "@@CODE_" + id + "@@";
+
+      }
+    );
+
+  safe =
+    safe.replace(
+      /\*\*(.*?)\*\*/g,
+      "<strong>$1</strong>"
+    );
+
+  safe =
+    safe.replace(
+      /`([^`]+)`/g,
+      '<span class="inlineCode">$1</span>'
+    );
+
+  safe =
+    safe.replace(
+      /\n\n/g,
+      "</p><p>"
+    );
+
+  safe =
+    safe.replace(
+      /\n/g,
+      "<br>"
+    );
+
+  safe =
+    "<p>" + safe + "</p>";
+
+  blocks.forEach(block => {
+
+    const html = `
+
+<div class="codeWrap">
+
+  <div class="codeHeader">
+
+    <div class="codeLanguage">
+
+      <div class="codeDots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      ${escapeHTML(block.language)}
+
+    </div>
+
+    <button
+      class="copyCode"
+      data-code="${encodeURIComponent(block.code)}"
+      type="button"
+    >
+      SALIN
+    </button>
+
+  </div>
+
+  <pre><code>${escapeHTML(block.code)}</code></pre>
+
+</div>
+
+`;
+
+    safe =
+      safe.replace(
+        "@@CODE_" + block.id + "@@",
+        html
+      );
+
+  });
+
+  return safe;
+}
+
+/* SCROLL */
+
+function scrollBottom(){
+
+  setTimeout(() => {
+
+    chat.scrollTop =
+      chat.scrollHeight;
+
+  },50);
+
+}
+
+/* MESSAGE */
+
+function addMessage(role,text){
+
+  document
+    .getElementById("welcome")
+    ?.remove();
+
+  const message =
+    document.createElement("div");
+
+  message.className =
+    "message " + role;
+
+  const avatar =
+    document.createElement("div");
+
+  avatar.className =
+    "avatar " +
+    (
+      role === "ai"
+      ? "aiAvatar"
+      : "userAvatar"
+    );
+
+  avatar.textContent =
+    role === "ai"
+    ? "✦"
+    : "U";
+
+  const bubble =
+    document.createElement("div");
+
+  bubble.className =
+    "bubble";
+
+  if(role === "ai"){
+
+    bubble.innerHTML =
+      formatAI(text);
+
+    const actions =
+      document.createElement("div");
+
+    actions.className =
+      "actions";
+
+    const copy =
+      document.createElement("button");
+
+    copy.className =
+      "action";
+
+    copy.type =
+      "button";
+
+    copy.textContent =
+      "⧉ Salin";
+
+    copy.onclick =
+      async () => {
+
+        try{
+
+          await navigator
+            .clipboard
+            .writeText(text);
+
+          copy.textContent =
+            "✓ Tersalin";
+
+          setTimeout(() => {
+
+            copy.textContent =
+              "⧉ Salin";
+
+          },1200);
+
+        }catch{}
+
+      };
+
+    actions.appendChild(copy);
+
+    bubble.appendChild(actions);
+
+  }else{
+
+    bubble.textContent =
+      text;
+
+  }
+
+  message.appendChild(avatar);
+  message.appendChild(bubble);
+
+  chatInner.appendChild(message);
+
+  bindCopyButtons();
+
+  scrollBottom();
+
+}
+
+/* COPY CODE */
+
+function bindCopyButtons(){
+
+  document
+    .querySelectorAll(".copyCode")
+    .forEach(button => {
+
+      if(button.dataset.ready)
+        return;
+
+      button.dataset.ready = "1";
+
+      button.onclick =
+        async () => {
+
+          try{
+
+            const code =
+              decodeURIComponent(
+                button.dataset.code
+              );
+
+            await navigator
+              .clipboard
+              .writeText(code);
+
+            button.textContent =
+              "✓ TERSALIN";
+
+            setTimeout(() => {
+
+              button.textContent =
+                "SALIN";
+
+            },1200);
+
+          }catch{}
+
+        };
+
+    });
+
+}
+
+/* TYPING */
+
+function showTyping(){
+
+  const message =
+    document.createElement("div");
+
+  message.className =
+    "message ai";
+
+  message.id =
+    "typingMessage";
+
+  message.innerHTML = `
+
+<div class="avatar aiAvatar">
+  ✦
+</div>
+
+<div class="bubble">
+
+  <div class="typing">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+</div>
+
+`;
+
+  chatInner.appendChild(message);
+
+  scrollBottom();
+
+}
+
+/* SEND */
+
+async function sendMessage(customText=null){
+
+  if(busy)
+    return;
+
+  const message =
+    (
+      customText !== null
+      ? customText
+      : input.value
+    ).trim();
+
+  if(!message)
+    return;
+
+  busy = true;
+
+  send.disabled = true;
+
+  input.value = "";
+
+  input.style.height = "46px";
+
+  messages.push({
+    role:"user",
+    text:message
+  });
+
+  addMessage(
+    "user",
+    message
+  );
+
+  showTyping();
+
+  try{
+
+    const response =
+      await fetch(
+        "/.netlify/functions/chat",
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+              messages
+            })
+        }
+      );
+
+    const data =
+      await response.json();
+
+    document
+      .getElementById("typingMessage")
+      ?.remove();
+
+    if(!response.ok){
+
+      throw new Error(
+        data.error ||
+        "Gagal menghubungi ZORA AI."
+      );
+
+    }
+
+    const answer =
+      data.text ||
+      "Maaf, ZORA AI tidak menghasilkan jawaban.";
+
+    messages.push({
+      role:"assistant",
+      text:answer
+    });
+
+    addMessage(
+      "ai",
+      answer
+    );
+
+    saveHistory(message);
+
+  }catch(error){
+
+    document
+      .getElementById("typingMessage")
+      ?.remove();
+
+    addMessage(
+      "ai",
+      "Maaf, terjadi kesalahan.\n\n" +
+      error.message
+    );
+
+  }finally{
+
+    busy = false;
+
+    send.disabled = false;
+
+    input.focus();
+
+  }
+
+}
+
+/* HISTORY */
+
+function saveHistory(title){
+
+  saved.unshift({
+
+    id:Date.now(),
+
+    title:
+      title.slice(0,50),
+
+    messages:[
+      ...messages
+    ]
+
+  });
+
+  if(saved.length > 20)
+    saved.pop();
+
+  localStorage.setItem(
+    "zora_history",
+    JSON.stringify(saved)
+  );
+
+  renderHistory();
+
+}
+
+function renderHistory(){
+
+  historyEl.innerHTML = "";
+
+  saved.forEach(item => {
+
+    const element =
+      document.createElement("div");
+
+    element.className =
+      "historyItem";
+
+    element.textContent =
+      item.title;
+
+    element.onclick =
+      () => {
+
+        messages =
+          [...item.messages];
+
+        chatInner.innerHTML =
+          "";
+
+        messages.forEach(message => {
+
+          addMessage(
+            message.role === "assistant"
+              ? "ai"
+              : "user",
+            message.text
+          );
+
+        });
+
+        closeSidebar();
+
+      };
+
+    historyEl.appendChild(element);
+
+  });
+
+}
+
+/* RESET */
+
+function resetChat(){
+
+  messages = [];
+
+  chatInner.innerHTML = `
+
+<div class="welcome" id="welcome">
+
+  <div class="heroOrb">
+    <span class="heroSymbol">✦</span>
+  </div>
+
+  <div class="welcomeEyebrow">
+    <span></span>
+    ZORA INTELLIGENCE
+    <span></span>
+  </div>
+
+  <h1>
+    Apa yang bisa
+    <span class="gradientText">
+      saya bantu?
+    </span>
+  </h1>
+
+  <p class="welcomeDescription">
+    Jelajahi ide, buat website, tulis kode,
+    belajar sesuatu yang baru, atau sekadar
+    ngobrol bersama ZORA AI.
+  </p>
+
+  <div class="promptGrid">
+
+    <button
+      class="promptCard"
+      data-prompt="Buatkan saya website landing page modern, mewah, responsive, dan lengkap dengan HTML CSS JavaScript"
+      type="button"
+    >
+
+      <div class="promptIcon">◇</div>
+
+      <div class="promptTitle">
+        Buat website
+      </div>
+
+      <div class="promptText">
+        Bangun website modern dari nol.
+      </div>
+
+    </button>
+
+    <button
+      class="promptCard"
+      data-prompt="Jelaskan konsep kecerdasan buatan dengan bahasa yang sangat mudah dipahami"
+      type="button"
+    >
+
+      <div class="promptIcon">◈</div>
+
+      <div class="promptTitle">
+        Pelajari sesuatu
+      </div>
+
+      <div class="promptText">
+        Dapatkan penjelasan sederhana.
+      </div>
+
+    </button>
+
+    <button
+      class="promptCard"
+      data-prompt="Buatkan kode HTML CSS dan JavaScript untuk website portfolio premium"
+      type="button"
+    >
+
+      <div class="promptIcon">◆</div>
+
+      <div class="promptTitle">
+        Tulis kode
+      </div>
+
+      <div class="promptText">
+        Buat kode yang siap digunakan.
+      </div>
+
+    </button>
+
+    <button
+      class="promptCard"
+      data-prompt="Berikan saya 10 ide website yang berguna dan menarik untuk dibuat"
+      type="button"
+    >
+
+      <div class="promptIcon">✧</div>
+
+      <div class="promptTitle">
+        Cari inspirasi
+      </div>
+
+      <div class="promptText">
+        Temukan ide project baru.
+      </div>
+
+    </button>
+
+  </div>
+
+</div>
+
+`;
+
+  bindPrompts();
+
+  closeSidebar();
+
+}
+
+/* PROMPTS */
+
+function bindPrompts(){
+
+  document
+    .querySelectorAll(".promptCard")
+    .forEach(button => {
+
+      button.onclick =
+        () => {
+
+          sendMessage(
+            button.dataset.prompt
+          );
+
+        };
+
+    });
+
+}
+
+/* SIDEBAR CLOSE */
+
+function closeSidebar(){
+
+  sidebar.classList.remove("open");
+
+  mobileMenu.textContent = "☰";
+
+  mobileMenu.setAttribute(
+    "aria-label",
+    "Buka menu"
+  );
+
+}
+
+/* SIDEBAR TOGGLE */
+
+mobileMenu.addEventListener(
+  "click",
+  function(e){
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    if(
+      sidebar.classList.contains("open")
+    ){
+
+      closeSidebar();
+
+    }else{
+
+      sidebar.classList.add("open");
+
+      mobileMenu.textContent = "×";
+
+      mobileMenu.setAttribute(
+        "aria-label",
+        "Tutup menu"
+      );
+
+    }
+
+  }
+);
+
+/* OUTSIDE CLICK */
+
+document.addEventListener(
+  "click",
+  function(e){
+
+    if(window.innerWidth > 760)
+      return;
+
+    if(
+      sidebar.classList.contains("open") &&
+      !sidebar.contains(e.target) &&
+      !mobileMenu.contains(e.target)
+    ){
+
+      closeSidebar();
+
+    }
+
+  }
+);
+
+/* INPUT */
+
+input.addEventListener(
+  "keydown",
+  function(event){
+
+    if(
+      event.key === "Enter" &&
+      !event.shiftKey
+    ){
+
+      event.preventDefault();
+
+      sendMessage();
+
+    }
+
+  }
+);
+
+input.addEventListener(
+  "input",
+  function(){
+
+    input.style.height =
+      "46px";
+
+    input.style.height =
+      Math.min(
+        input.scrollHeight,
+        150
+      ) + "px";
+
+  }
+);
+
+/* BUTTONS */
+
+
+const attachButton=document.getElementById("attachButton"),imageButton=document.getElementById("imageButton"),fileInput=document.getElementById("fileInput"),attachmentPreview=document.getElementById("attachmentPreview");
+let selectedFile=null;
+attachButton?.addEventListener("click",()=>fileInput.click());
+fileInput?.addEventListener("change",()=>{selectedFile=fileInput.files?.[0]||null;renderAttachment()});
+function renderAttachment(){if(!selectedFile){attachmentPreview.classList.remove("show");attachmentPreview.innerHTML="";return}attachmentPreview.classList.add("show");const n=escapeHTML(selectedFile.name);if(selectedFile.type.startsWith("image/")){const u=URL.createObjectURL(selectedFile);attachmentPreview.innerHTML=`<div class="fileChip"><img src="${u}"><span>${n}</span><button class="fileRemove" id="removeFile">×</button></div>`}else attachmentPreview.innerHTML=`<div class="fileChip"><span>📎 ${n}</span><button class="fileRemove" id="removeFile">×</button></div>`;document.getElementById("removeFile")?.addEventListener("click",clearFile)}
+function clearFile(){selectedFile=null;fileInput.value="";renderAttachment()}
+function fileToBase64(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(",")[1]);r.onerror=rej;r.readAsDataURL(f)})}
+function looksLikeImageRequest(t){return /\b(buat|bikin|generate|buatkan|ciptakan|hasilkan)\s+(gambar|image|ilustrasi|poster|logo|wallpaper|foto)\b/i.test(t)||/\b(generate|create|make|draw)\s+(an?\s+)?(image|picture|illustration|logo|poster|wallpaper)\b/i.test(t)}
+async function apiChat(text,file){let attachment=file?{name:file.name,mimeType:file.type||"application/octet-stream",data:await fileToBase64(file)}:null;const r=await fetch("/.netlify/functions/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages,message:text,attachment})});const d=await r.json();if(!r.ok)throw Error(d.error||"Gagal menghubungi ZORA AI.");return d}
+async function apiImage(prompt,file){let image=file?{mimeType:file.type,data:await fileToBase64(file)}:null;const r=await fetch("/.netlify/functions/image",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt,image})});const d=await r.json();if(!r.ok)throw Error(d.error||"Gagal membuat gambar.");return d}
+async function handleSend(){if(busy)return;const text=input.value.trim();if(!text&&!selectedFile)return;if(!sessionStorage.getItem("zora_logged_in")){sessionStorage.setItem("zora_pending_message",text);location.href="index.html";return}busy=true;send.disabled=true;const file=selectedFile;const shown=text||"Analisis file ini.";addMessage("user",shown+(file?`\n\n📎 ${file.name}`:""));messages.push({role:"user",text:shown});input.value="";clearFile();showTyping();try{if(looksLikeImageRequest(text)){const d=await apiImage(text||"Buat gambar berdasarkan file ini.",file);document.getElementById("typingMessage")?.remove();addMessage("ai",d.text||"Gambar berhasil dibuat.");messages.push({role:"assistant",text:d.text||"Gambar berhasil dibuat."});if(d.image){const last=chatInner.lastElementChild;const bubble=last?.querySelector(".messageBubble,.bubble,.messageContent")||last;const img=document.createElement("img");img.className="generatedImage";img.src=`data:${d.image.mimeType};base64,${d.image.data}`;img.alt="Gambar hasil ZORA AI";bubble?.appendChild(img);const a=document.createElement("a");a.className="downloadImage";a.href=img.src;a.download="zora-ai-image.png";a.textContent="Simpan gambar";bubble?.appendChild(a)}}else{const d=await apiChat(text,file);document.getElementById("typingMessage")?.remove();const ans=d.text||"Maaf, ZORA AI tidak menghasilkan jawaban.";messages.push({role:"assistant",text:ans});addMessage("ai",ans)}saveHistory(shown)}catch(e){document.getElementById("typingMessage")?.remove();addMessage("ai","Maaf, terjadi kesalahan.\n\n"+e.message)}finally{busy=false;send.disabled=false;input.focus()}}
+send.onclick=handleSend;imageButton?.addEventListener("click",()=>{if(!input.value.trim()&&!selectedFile){input.placeholder="Contoh: buat gambar logo ZORA AI yang mewah...";input.focus();return}handleSend()});input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();handleSend()}});
+const pending=sessionStorage.getItem("zora_pending_message");if(sessionStorage.getItem("zora_logged_in")&&pending){sessionStorage.removeItem("zora_pending_message");setTimeout(()=>{input.value=pending;handleSend()},250)}
+</script>
+
+</body>
+</html>
